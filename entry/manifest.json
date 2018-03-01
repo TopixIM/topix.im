@@ -1,0 +1,15 @@
+{
+  "short_name": "Topix",
+  "name": "Topix",
+  "icons": [
+    {
+      "src": "http://cdn.tiye.me/logo/topix.png",
+      "sizes": "773x773"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eeeeff",
+  "theme_color": "#eeeeff"
+}

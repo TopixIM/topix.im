@@ -8,8 +8,8 @@
             [cljs.reader :refer [read-string]]))
 
 (def base-info
-  {:title "Calcit",
-   :icon "http://cdn.tiye.me/logo/mvc-works.png",
+  {:title "Topix",
+   :icon "http://cdn.tiye.me/logo/topix.png",
    :ssr nil,
    :inline-html nil,
    :inline-styles [(slurp "./entry/main.css")]})

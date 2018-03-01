@@ -28,3 +28,15 @@ body * {
 ::-webkit-resizer{
   background-color:transparent;
 }
+
+.logo-spin {
+  transform-origin: 50% 50%;
+  animation: spin 4s linear infinite;
+}
+
+
+@keyframes spin {
+  100% {
+    transform:rotate(360deg);
+  }
+}

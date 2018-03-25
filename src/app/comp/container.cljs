@@ -9,26 +9,35 @@
             [respo.comp.space :refer [=<]]
             [reel.comp.reel :refer [comp-reel]]
             [respo-md.comp.md :refer [comp-md]]
-            [respo.util.list :refer [map-with-idx]]))
+            [respo.util.list :refer [map-with-idx]]
+            [app.schema :refer [dev?]]))
 
 (def projects
-  [{:title "Schemer",
-    :about "A todolist on mobile screen",
-    :url "https://github.com/TopixIM/schemer"}
-   {:title "Impatiens",
+  [{:title "Impatiens",
     :about "A very tiny chatroom app.",
-    :url "https://github.com/TopixIM/impatiens"}])
+    :url "https://github.com/TopixIM/impatiens",
+    :demo "http://impatiens.topix.im"}
+   {:title "Woodenlist",
+    :about "Personal todolist in realtime",
+    :url "https://github.com/TopixIM/woodenlist",
+    :demo "wood.topix.im"}])
 
 (defn render-projects [items]
   (list->
-   {:style (:merge ui/row {:flex-wrap :wrap, :width 800})}
+   {:style (:merge ui/row {:flex-wrap :wrap, :width 600})}
    (->> items
         (map-with-idx
          (fn [item]
            (div
-            {:style {:background-color (hsl 200 80 70 0.2), :padding "8px 16px", :margin 20}}
-            (a {:href (:url item)} (<> (:title item)))
-            (div {} (<> (:about item) {:color (hsl 0 0 70)}))))))))
+            {:style {:background-color (hsl 180 80 70 0.2), :padding "8px 16px", :margin 20}}
+            (div
+             {:style {:font-size 20, :font-family ui/font-fancy}}
+             (a {:href (:url item), :style {:text-decoration :none}} (<> (:title item))))
+            (div
+             {}
+             (<> (:about item) {:color (hsl 0 0 70)})
+             (=< 8 nil)
+             (a {:href (:demo item), :target "_blank"} (<> "Demo")))))))))
 
 (defcomp
  comp-container
@@ -37,7 +46,7 @@
    (div
     {:style (merge ui/global)}
     (div
-     {:style (merge ui/center {:height 400})}
+     {:style (merge ui/center {:height 320})}
      (div
       {:style ui/row-center}
       (<>
@@ -54,5 +63,5 @@
                 :height 160,
                 :display :inline-block},
         :class-name "logo-spin"})))
-    (div {:style (merge ui/center {:padding 40})} (render-projects projects))
-    (cursor-> :reel comp-reel states reel {}))))
+    (div {:style (merge ui/center {:padding 0})} (render-projects projects))
+    (when dev? (cursor-> :reel comp-reel states reel {})))))

@@ -4,7 +4,7 @@
 
 (def configs {:orgization "TopixIM"
               :name "topix.im"
-              :cdn "topix.im"})
+              :cdn "topix-im"})
 
 (defn sh! [command]
   (println command)

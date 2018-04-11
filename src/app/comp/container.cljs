@@ -20,7 +20,11 @@
    {:title "Woodenlist",
     :about "Personal todolist in realtime",
     :url "https://github.com/TopixIM/woodenlist",
-    :demo "wood.topix.im"}])
+    :demo "http://wood.topix.im"}
+   {:title "Tabletwo",
+    :about "Collabrative markdown drafter",
+    :url "https://github.com/TopixIM/tabletwo",
+    :demo "http://repo.topix.im/tabletwo"}])
 
 (defn render-projects [items]
   (list->
@@ -63,5 +67,7 @@
                 :height 160,
                 :display :inline-block},
         :class-name "logo-spin"})))
+    (div {:style (merge ui/center {:font-size 16})} (<> "Sharing topics over the wire!"))
     (div {:style (merge ui/center {:padding 0})} (render-projects projects))
+    (=< nil 200)
     (when dev? (cursor-> :reel comp-reel states reel {})))))

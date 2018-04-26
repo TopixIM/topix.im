@@ -24,7 +24,11 @@
    {:title "Tabletwo",
     :about "Collabrative markdown drafter",
     :url "https://github.com/TopixIM/tabletwo",
-    :demo "http://repo.topix.im/tabletwo"}])
+    :demo "http://tabletwo.topix.im/"}
+   {:title "Befunge",
+    :about "Collaborative Befunge playground",
+    :url "https://github.com/TopixIM/befunge",
+    :demo "http://repo.topix.im/befunge"}])
 
 (defn render-projects [items]
   (list->

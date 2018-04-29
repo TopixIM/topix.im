@@ -28,7 +28,11 @@
    {:title "Befunge",
     :about "Collaborative Befunge playground",
     :url "https://github.com/TopixIM/befunge",
-    :demo "http://repo.topix.im/befunge"}])
+    :demo "http://repo.topix.im/befunge"}
+   {:title "Checklist",
+    :about "Collaborative checklist",
+    :url "https://github.com/TopixIM/checklist",
+    :demo "http://repo.topix.im/checklist"}])
 
 (defn render-projects [items]
   (list->

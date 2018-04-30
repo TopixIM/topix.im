@@ -32,7 +32,11 @@
    {:title "Checklist",
     :about "Collaborative checklist",
     :url "https://github.com/TopixIM/checklist",
-    :demo "http://repo.topix.im/checklist"}])
+    :demo "http://repo.topix.im/checklist"}
+   {:title "Copyboard",
+    :about "Collaborative copyboard",
+    :url "https://github.com/TopixIM/copyboard",
+    :demo "http://repo.topix.im/copyboard"}])
 
 (defn render-projects [items]
   (list->

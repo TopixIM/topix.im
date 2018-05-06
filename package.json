@@ -1,7 +1,7 @@
 {
-  "name": "calcit-workflow",
+  "name": "topix.im",
   "version": "0.1.0",
-  "description": "ClojureScript workflow using Calcit Editor",
+  "description": "Home page for Topix",
   "main": "index.js",
   "scripts": {
     "watch": "shadow-cljs watch client",

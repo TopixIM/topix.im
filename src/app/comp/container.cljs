@@ -44,20 +44,21 @@
 
 (defn render-projects [items]
   (list->
-   {:style (:merge ui/row {:flex-wrap :wrap, :width 600})}
+   {:style (merge ui/row {:flex-wrap :wrap, :justify-content :center})}
    (->> items
         (map-with-idx
          (fn [item]
            (div
-            {:style {:background-color (hsl 180 80 70 0.2), :padding "8px 16px", :margin 20}}
+            {:style {:border (str "1px solid " (hsl 180 80 80)),
+                     :padding "8px 16px",
+                     :margin 20,
+                     :width 360}}
             (div
              {:style {:font-size 20, :font-family ui/font-fancy}}
              (a {:href (:url item), :style {:text-decoration :none}} (<> (:title item))))
-            (div
-             {}
-             (<> (:about item) {:color (hsl 0 0 70)})
-             (=< 8 nil)
-             (a {:href (:demo item), :target "_blank"} (<> "Demo")))))))))
+            (a
+             {:href (:demo item), :target "_blank", :style {:text-decoration :none}}
+             (<> (:about item) {:color (hsl 0 0 70)}))))))))
 
 (defcomp
  comp-container
@@ -83,7 +84,12 @@
                 :height 160,
                 :display :inline-block},
         :class-name "logo-spin"})))
-    (div {:style (merge ui/center {:font-size 16})} (<> "Sharing topics over the wire!"))
-    (div {:style (merge ui/center {:padding 0})} (render-projects projects))
+    (div
+     {:style (merge ui/row-center {:font-size 16, :color (hsl 0 0 80)})}
+     (<> "Sharing topics over the wire!")
+     (=< 8 nil)
+     (a {:href "https://github.com/TopixIM/", :inner-text "GitHub"}))
+    (=< nil 32)
+    (render-projects projects)
     (=< nil 200)
     (when dev? (cursor-> :reel comp-reel states reel {})))))

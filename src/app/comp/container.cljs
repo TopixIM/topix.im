@@ -36,7 +36,11 @@
    {:title "Copyboard",
     :about "Collaborative copyboard",
     :url "https://github.com/TopixIM/copyboard",
-    :demo "http://repo.topix.im/copyboard"}])
+    :demo "http://repo.topix.im/copyboard"}
+   {:title "Daily",
+    :about "An app for repeating several tasks everyday",
+    :url "https://github.com/TopixIM/daily",
+    :demo "http://repo.topix.im/daily"}])
 
 (defn render-projects [items]
   (list->

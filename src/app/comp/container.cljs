@@ -40,7 +40,11 @@
    {:title "Daily",
     :about "An app for repeating several tasks everyday",
     :url "https://github.com/TopixIM/daily",
-    :demo "http://repo.topix.im/daily"}])
+    :demo "http://repo.topix.im/daily"}
+   {:title "Diary",
+    :about "A tiny diary app",
+    :url "https://github.com/TopixIM/diary",
+    :demo "http://diary.topix.im"}])
 
 (defn render-projects [items]
   (list->

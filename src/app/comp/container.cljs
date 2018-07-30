@@ -59,10 +59,16 @@
                      :width 360}}
             (div
              {:style {:font-size 20, :font-family ui/font-fancy}}
-             (a {:href (:url item), :style {:text-decoration :none}} (<> (:title item))))
-            (a
-             {:href (:demo item), :target "_blank", :style {:text-decoration :none}}
-             (<> (:about item) {:color (hsl 0 0 70)}))))))))
+             (a
+              {:href (:demo item), :target "_self", :style {:text-decoration :none}}
+              (<> (:title item)))
+             (=< 8 nil)
+             (a
+              {:href (:url item),
+               :target "_blank",
+               :style {:text-decoration :none, :font-size 12}}
+              (<> "[source]")))
+            (<> (:about item) {:color (hsl 0 0 70)})))))))
 
 (defcomp
  comp-container

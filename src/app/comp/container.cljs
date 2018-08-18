@@ -13,7 +13,11 @@
             [app.schema :refer [dev?]]))
 
 (def projects
-  [{:title "Impatiens",
+  [{:title "Copyboard",
+    :about "Collaborative copyboard",
+    :url "https://github.com/TopixIM/copyboard",
+    :demo "http://repo.topix.im/copyboard"}
+   {:title "Impatiens",
     :about "A very tiny chatroom app.",
     :url "https://github.com/TopixIM/impatiens",
     :demo "http://impatiens.topix.im"}
@@ -33,10 +37,6 @@
     :about "Collaborative checklist",
     :url "https://github.com/TopixIM/checklist",
     :demo "http://repo.topix.im/checklist"}
-   {:title "Copyboard",
-    :about "Collaborative copyboard",
-    :url "https://github.com/TopixIM/copyboard",
-    :demo "http://repo.topix.im/copyboard"}
    {:title "Daily",
     :about "An app for repeating several tasks everyday",
     :url "https://github.com/TopixIM/daily",
@@ -53,12 +53,15 @@
         (map-with-idx
          (fn [item]
            (div
-            {:style {:border (str "1px solid " (hsl 180 80 80)),
-                     :padding "8px 16px",
-                     :margin 20,
-                     :width 360}}
+            {:style (merge
+                     ui/row
+                     {:border (str "1px solid " (hsl 180 80 94)),
+                      :padding "8px 16px",
+                      :margin 20,
+                      :width 360,
+                      :align-items :center})}
             (div
-             {:style {:font-size 20, :font-family ui/font-fancy}}
+             {:style (merge ui/row-center {:font-size 20, :font-family ui/font-fancy})}
              (a
               {:href (:demo item), :target "_self", :style {:text-decoration :none}}
               (<> (:title item)))
@@ -67,7 +70,8 @@
               {:href (:url item),
                :target "_blank",
                :style {:text-decoration :none, :font-size 12}}
-              (<> "[source]")))
+              (<> "[git]")))
+            (=< 8 nil)
             (<> (:about item) {:color (hsl 0 0 70)})))))))
 
 (defcomp
@@ -82,23 +86,24 @@
       {:style ui/row-center}
       (<>
        "Topi"
-       {:font-size 80,
+       {:font-size 64,
         :font-family (str "Gill Sans," ui/font-fancy),
         :font-weight 100,
         :color (hsl 240 80 90)})
       (div
-       {:style {:margin-left 0,
+       {:style {:margin-left -10,
                 :background-image (str "url(http://cdn.tiye.me/logo/topix.png)"),
                 :background-size :cover,
                 :width 160,
                 :height 160,
-                :display :inline-block},
+                :display :inline-block,
+                :opacity 0.8},
         :class-name "logo-spin"})))
     (div
      {:style (merge ui/row-center {:font-size 16, :color (hsl 0 0 80)})}
      (<> "Sharing topics over the wire!")
      (=< 8 nil)
-     (a {:href "https://github.com/TopixIM/", :inner-text "GitHub"}))
+     (a {:href "https://github.com/TopixIM/", :inner-text "TopixIM"}))
     (=< nil 32)
     (render-projects projects)
     (=< nil 200)

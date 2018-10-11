@@ -44,7 +44,11 @@
    {:title "Diary",
     :about "A tiny diary app",
     :url "https://github.com/TopixIM/diary",
-    :demo "http://diary.topix.im"}])
+    :demo "http://diary.topix.im"}
+   {:title "Copycat",
+    :about "Copy/paste toolkits",
+    :url "https://github.com/TopixIM/copycat",
+    :demo "http://repo.topix.im/copycat/"}])
 
 (defn render-projects [items]
   (list->

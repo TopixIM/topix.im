@@ -2,10 +2,9 @@
 (ns app.comp.container
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
-            [respo.macros
+            [respo.core
              :refer
              [defcomp cursor-> action-> mutation-> list-> <> a div button textarea span]]
-            [verbosely.core :refer [verbosely!]]
             [respo.comp.space :refer [=<]]
             [reel.comp.reel :refer [comp-reel]]
             [respo-md.comp.md :refer [comp-md]]
@@ -25,6 +24,10 @@
     :about "Personal todolist in realtime",
     :url "https://github.com/TopixIM/woodenlist",
     :demo "http://wood.topix.im"}
+   {:title "Pumila",
+    :about "Personal emotion records",
+    :url "https://github.com/TopixIM/pumila",
+    :demo "http://pumila.topix.im"}
    {:title "Tabletwo",
     :about "Collabrative markdown drafter",
     :url "https://github.com/TopixIM/tabletwo",
@@ -48,7 +51,11 @@
    {:title "Copycat",
     :about "Copy/paste toolkits",
     :url "https://github.com/TopixIM/copycat",
-    :demo "http://repo.topix.im/copycat/"}])
+    :demo "http://repo.topix.im/copycat/"}
+   {:title "Timedrops",
+    :about "Time records",
+    :url "https://github.com/TopixIM/timedrops",
+    :demo "http://repo.topix.im/timedrops/"}])
 
 (defn render-projects [items]
   (list->

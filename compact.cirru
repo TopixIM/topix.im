@@ -3,6 +3,7 @@
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
     :version |0.0.1
+  :entries $ {}
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -89,6 +90,7 @@
         |projects $ quote
           def projects $ []
             {} (:title "\"Copyboard") (:about "\"Collaborative copyboard") (:url "\"https://github.com/TopixIM/copyboard") (:demo "\"http://repo.topix.im/copyboard")
+            {} (:title "\"Timegrass") (:about "\"Another Todolist app") (:url "\"https://github.com/TopixIM/timegrass") (:demo "\"http://timegrass.topix.im")
             {} (:title "\"Impatiens") (:about "\"A very tiny chatroom app.") (:url "\"https://github.com/TopixIM/impatiens") (:demo "\"http://impatiens.topix.im")
             {} (:title "\"Woodenlist") (:about "\"Personal todolist in realtime") (:url "\"https://github.com/TopixIM/woodenlist") (:demo "\"http://wood.topix.im")
             {} (:title "\"Pumila") (:about "\"Personal emotion records") (:url "\"https://github.com/TopixIM/pumila") (:demo "\"http://pumila.topix.im")
@@ -96,7 +98,6 @@
             {} (:title "\"Befunge") (:about "\"Collaborative Befunge playground") (:url "\"https://github.com/TopixIM/befunge") (:demo "\"http://repo.topix.im/befunge")
             {} (:title "\"Checklist") (:about "\"Collaborative checklist") (:url "\"https://github.com/TopixIM/checklist") (:demo "\"http://repo.topix.im/checklist")
             {} (:title "\"Daily") (:about "\"An app for repeating several tasks everyday") (:url "\"https://github.com/TopixIM/daily") (:demo "\"http://repo.topix.im/daily")
-            {} (:title "\"Diary") (:about "\"A tiny diary app") (:url "\"https://github.com/TopixIM/diary") (:demo "\"http://diary.topix.im")
             {} (:title |Copycat) (:about "\"Copy/paste toolkits") (:url "\"https://github.com/TopixIM/copycat") (:demo "\"http://repo.topix.im/copycat/")
             {} (:title "\"Timedrops") (:about "\"Time records") (:url "\"https://github.com/TopixIM/timedrops") (:demo "\"http://repo.topix.im/timedrops/")
     |app.schema $ {}
@@ -166,7 +167,7 @@
         |reload! $ quote
           defn reload! () $ if (nil? build-errors)
             do (remove-watch *reel :changes) (clear-cache!)
-              add-watch *reel :changes $ fn (reel prev) (render-app!)
+              add-watch *reel :changes $ fn (reel prev) (render-app! render!)
               reset! *reel $ refresh-reel @*reel schema/store updater
               hud! "\"ok~" "\"Ok"
             hud! "\"error" build-errors

@@ -1,21 +1,10 @@
 
 {} (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
+  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
-    :version |0.0.1
   :entries $ {}
   :files $ {}
     |app.comp.container $ {}
-      :ns $ quote
-        ns app.comp.container $ :require
-          [] respo-ui.core :refer $ [] hsl
-          [] respo-ui.core :as ui
-          [] respo.core :refer $ [] defcomp >> list-> <> a div button textarea span
-          [] respo.comp.space :refer $ [] =<
-          [] reel.comp.reel :refer $ [] comp-reel
-          [] respo-md.comp.md :refer $ [] comp-md
-          [] respo.util.list :refer $ [] map-with-idx
-          [] app.config :refer $ [] dev?
       :defs $ {}
         |comp-container $ quote
           defcomp comp-container (reel)
@@ -53,6 +42,19 @@
                 render-projects projects
                 =< nil 200
                 when dev? $ comp-reel (>> states :reel) reel ({})
+        |projects $ quote
+          def projects $ []
+            {} (:title "\"Copyboard") (:about "\"Collaborative copyboard") (:url "\"https://github.com/TopixIM/copyboard") (:demo "\"http://repo.topix.im/copyboard")
+            {} (:title "\"Timegrass") (:about "\"Another Todolist app") (:url "\"https://github.com/TopixIM/timegrass") (:demo "\"http://timegrass.topix.im")
+            {} (:title "\"Impatiens") (:about "\"A very tiny chatroom app.") (:url "\"https://github.com/TopixIM/impatiens") (:demo "\"http://impatiens.topix.im")
+            {} (:title "\"Woodenlist") (:about "\"Personal todolist in realtime") (:url "\"https://github.com/TopixIM/woodenlist") (:demo "\"http://wood.topix.im")
+            {} (:title "\"Pumila") (:about "\"Personal emotion records") (:url "\"https://github.com/TopixIM/pumila") (:demo "\"http://pumila.topix.im")
+            {} (:title |Tabletwo) (:about "\"Collabrative markdown drafter") (:url "\"https://github.com/TopixIM/tabletwo") (:demo "\"http://tabletwo.topix.im/")
+            {} (:title "\"Befunge") (:about "\"Collaborative Befunge playground") (:url "\"https://github.com/TopixIM/befunge") (:demo "\"http://repo.topix.im/befunge")
+            {} (:title "\"Checklist") (:about "\"Collaborative checklist") (:url "\"https://github.com/TopixIM/checklist") (:demo "\"http://repo.topix.im/checklist")
+            {} (:title "\"Daily") (:about "\"An app for repeating several tasks everyday") (:url "\"https://github.com/TopixIM/daily") (:demo "\"http://repo.topix.im/daily")
+            {} (:title |Copycat) (:about "\"Copy/paste toolkits") (:url "\"https://github.com/TopixIM/copycat") (:demo "\"http://repo.topix.im/copycat/")
+            {} (:title "\"Timedrops") (:about "\"Time records") (:url "\"https://github.com/TopixIM/timedrops") (:demo "\"http://repo.topix.im/timedrops/")
         |render-projects $ quote
           defn render-projects (items)
             list->
@@ -87,66 +89,31 @@
                     =< 8 nil
                     <> (:about item)
                       {} $ :color (hsl 0 0 70)
-        |projects $ quote
-          def projects $ []
-            {} (:title "\"Copyboard") (:about "\"Collaborative copyboard") (:url "\"https://github.com/TopixIM/copyboard") (:demo "\"http://repo.topix.im/copyboard")
-            {} (:title "\"Timegrass") (:about "\"Another Todolist app") (:url "\"https://github.com/TopixIM/timegrass") (:demo "\"http://timegrass.topix.im")
-            {} (:title "\"Impatiens") (:about "\"A very tiny chatroom app.") (:url "\"https://github.com/TopixIM/impatiens") (:demo "\"http://impatiens.topix.im")
-            {} (:title "\"Woodenlist") (:about "\"Personal todolist in realtime") (:url "\"https://github.com/TopixIM/woodenlist") (:demo "\"http://wood.topix.im")
-            {} (:title "\"Pumila") (:about "\"Personal emotion records") (:url "\"https://github.com/TopixIM/pumila") (:demo "\"http://pumila.topix.im")
-            {} (:title |Tabletwo) (:about "\"Collabrative markdown drafter") (:url "\"https://github.com/TopixIM/tabletwo") (:demo "\"http://tabletwo.topix.im/")
-            {} (:title "\"Befunge") (:about "\"Collaborative Befunge playground") (:url "\"https://github.com/TopixIM/befunge") (:demo "\"http://repo.topix.im/befunge")
-            {} (:title "\"Checklist") (:about "\"Collaborative checklist") (:url "\"https://github.com/TopixIM/checklist") (:demo "\"http://repo.topix.im/checklist")
-            {} (:title "\"Daily") (:about "\"An app for repeating several tasks everyday") (:url "\"https://github.com/TopixIM/daily") (:demo "\"http://repo.topix.im/daily")
-            {} (:title |Copycat) (:about "\"Copy/paste toolkits") (:url "\"https://github.com/TopixIM/copycat") (:demo "\"http://repo.topix.im/copycat/")
-            {} (:title "\"Timedrops") (:about "\"Time records") (:url "\"https://github.com/TopixIM/timedrops") (:demo "\"http://repo.topix.im/timedrops/")
-    |app.schema $ {}
-      :ns $ quote (ns app.schema)
-      :defs $ {}
-        |store $ quote
-          def store $ {}
-            :states $ {}
-            :content |
-        |config $ quote
-          def config $ {} (:storage |workflow)
-    |app.updater $ {}
       :ns $ quote
-        ns app.updater $ :require
-          [] respo.cursor :refer $ [] update-states
+        ns app.comp.container $ :require
+          [] respo-ui.core :refer $ [] hsl
+          [] respo-ui.core :as ui
+          [] respo.core :refer $ [] defcomp >> list-> <> a div button textarea span
+          [] respo.comp.space :refer $ [] =<
+          [] reel.comp.reel :refer $ [] comp-reel
+          [] respo-md.comp.md :refer $ [] comp-md
+          [] respo.util.list :refer $ [] map-with-idx
+          [] app.config :refer $ [] dev?
+    |app.config $ {}
       :defs $ {}
-        |updater $ quote
-          defn updater (store op op-data op-id op-time)
-            case-default op
-              do (println "\"Unkown op:" op) store
-              :states $ update-states store op-data
-              :content $ assoc store :content op-data
-              :hydrate-storage op-data
+        |dev? $ quote
+          def dev? $ = "\"dev" (get-env "\"mode" "\"release")
+        |site $ quote
+          def site $ {} (:dev-ui "\"http://localhost:8100/main.css") (:release-ui "\"http://cdn.tiye.me/favored-fonts/main.css") (:cdn-url "\"http://cdn.tiye.me/topix-im/") (:cdn-folder "\"tiye.me:cdn/topix-im") (:title "\"Topix") (:icon "\"http://cdn.tiye.me/logo/topix.png") (:storage-key "\"topix.im") (:upload-folder "\"tiye.me:repo/TopixIM/topix.im/")
+      :ns $ quote (ns app.config)
     |app.main $ {}
-      :ns $ quote
-        ns app.main $ :require
-          [] respo.core :refer $ [] render! clear-cache! realize-ssr!
-          [] app.comp.container :refer $ [] comp-container
-          [] app.updater :refer $ [] updater
-          [] app.schema :as schema
-          [] reel.util :refer $ [] listen-devtools!
-          [] reel.core :refer $ [] reel-updater refresh-reel
-          [] reel.schema :as reel-schema
-          [] cljs.reader :refer $ [] read-string
-          [] app.config :as config
-          "\"./calcit.build-errors" :default build-errors
-          "\"bottom-tip" :default hud!
       :defs $ {}
-        |render-app! $ quote
-          defn render-app! (renderer)
-            renderer mount-target (comp-container @*reel) dispatch!
-        |persist-storage! $ quote
-          defn persist-storage! (? e)
-            js/localStorage.setItem (:storage-key config/site)
-              format-cirru-edn $ :store @*reel
-        |mount-target $ quote
-          def mount-target $ .querySelector js/document |.app
         |*reel $ quote
           defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+        |dispatch! $ quote
+          defn dispatch! (op op-data)
+            when config/dev? $ println "\"Dispatch:" op
+            reset! *reel $ reel-updater updater @*reel op op-data
         |main! $ quote
           defn main! ()
             println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
@@ -160,10 +127,12 @@
               when (some? raw)
                 dispatch! :hydrate-storage $ parse-cirru-edn raw
             println "|App started."
-        |dispatch! $ quote
-          defn dispatch! (op op-data)
-            when config/dev? $ println "\"Dispatch:" op
-            reset! *reel $ reel-updater updater @*reel op op-data
+        |mount-target $ quote
+          def mount-target $ .querySelector js/document |.app
+        |persist-storage! $ quote
+          defn persist-storage! (? e)
+            js/localStorage.setItem (:storage-key config/site)
+              format-cirru-edn $ :store @*reel
         |reload! $ quote
           defn reload! () $ if (nil? build-errors)
             do (remove-watch *reel :changes) (clear-cache!)
@@ -171,16 +140,46 @@
               reset! *reel $ refresh-reel @*reel schema/store updater
               hud! "\"ok~" "\"Ok"
             hud! "\"error" build-errors
+        |render-app! $ quote
+          defn render-app! (renderer)
+            renderer mount-target (comp-container @*reel) dispatch!
         |repeat! $ quote
           defn repeat! (duration cb)
             js/setTimeout
               fn () (cb)
                 repeat! (* 1000 duration) cb
               * 1000 duration
-    |app.config $ {}
-      :ns $ quote (ns app.config)
+      :ns $ quote
+        ns app.main $ :require
+          [] respo.core :refer $ [] render! clear-cache! realize-ssr!
+          [] app.comp.container :refer $ [] comp-container
+          [] app.updater :refer $ [] updater
+          [] app.schema :as schema
+          [] reel.util :refer $ [] listen-devtools!
+          [] reel.core :refer $ [] reel-updater refresh-reel
+          [] reel.schema :as reel-schema
+          [] cljs.reader :refer $ [] read-string
+          [] app.config :as config
+          "\"./calcit.build-errors" :default build-errors
+          "\"bottom-tip" :default hud!
+    |app.schema $ {}
       :defs $ {}
-        |dev? $ quote
-          def dev? $ = "\"dev" (get-env "\"mode")
-        |site $ quote
-          def site $ {} (:dev-ui "\"http://localhost:8100/main.css") (:release-ui "\"http://cdn.tiye.me/favored-fonts/main.css") (:cdn-url "\"http://cdn.tiye.me/topix-im/") (:cdn-folder "\"tiye.me:cdn/topix-im") (:title "\"Topix") (:icon "\"http://cdn.tiye.me/logo/topix.png") (:storage-key "\"topix.im") (:upload-folder "\"tiye.me:repo/TopixIM/topix.im/")
+        |config $ quote
+          def config $ {} (:storage |workflow)
+        |store $ quote
+          def store $ {}
+            :states $ {}
+            :content |
+      :ns $ quote (ns app.schema)
+    |app.updater $ {}
+      :defs $ {}
+        |updater $ quote
+          defn updater (store op op-data op-id op-time)
+            case-default op
+              do (println "\"Unkown op:" op) store
+              :states $ update-states store op-data
+              :content $ assoc store :content op-data
+              :hydrate-storage op-data
+      :ns $ quote
+        ns app.updater $ :require
+          [] respo.cursor :refer $ [] update-states

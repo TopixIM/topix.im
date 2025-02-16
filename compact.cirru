@@ -13,28 +13,21 @@
                   store $ :store reel
                   states $ :states store
                 div
-                  {} $ :style (merge ui/global)
+                  {} $ :class-name css/global
                   div
-                    {} $ :style
-                      merge ui/center $ {} (:height 320)
+                    {} (:class-name css/center)
+                      :style $ {} (:height 320)
                     div
-                      {} $ :style ui/row-center
+                      {} $ :class-name css/row-center
                       <> |Topi $ {} (:font-size 64)
                         :font-family $ str "|Gill Sans," ui/font-fancy
                         :font-weight 100
                         :color $ hsl 240 80 90
                       div $ {}
-                        :style $ {} (:margin-left -10)
-                          :background-image $ str "|url(http://cdn.tiye.me/logo/topix.png)"
-                          :background-size :cover
-                          :width 160
-                          :height 160
-                          :display :inline-block
-                          :opacity 0.8
-                        :class-name |logo-spin
+                        :class-name $ str-spaced |logo-spin style-logo-spin
                   div
-                    {} $ :style
-                      merge ui/row-center $ {} (:font-size 16)
+                    {} (:class-name css/row-center)
+                      :style $ {} (:font-size 16)
                         :color $ hsl 0 0 80
                     <> "\"Sharing topics over the wire!"
                     =< 8 nil
@@ -61,42 +54,56 @@
           :code $ quote
             defn render-projects (items)
               list->
-                {} $ :style
-                  merge ui/row $ {} (:flex-wrap :wrap) (:justify-content :center)
+                {} (:class-name css/row)
+                  :style $ {} (:flex-wrap :wrap) (:justify-content :center)
                 -> items $ map-indexed
                   fn (idx item)
                     [] idx $ div
-                      {} $ :style
-                        merge ui/row $ {}
-                          :border $ str "\"1px solid " (hsl 180 80 94)
-                          :padding "|8px 16px"
-                          :margin 20
-                          :width 360
-                          :align-items :center
+                      {} $ :class-name (str-spaced css/row style-project)
                       div
-                        {} $ :style
-                          merge ui/row-center $ {} (:font-size 20) (:font-family ui/font-fancy)
-                        a
-                          {}
-                            :href $ :demo item
-                            :target "\"_self"
-                            :style $ {} (:text-decoration :none)
-                          <> $ :title item
+                        {}
+                          :class-name $ str-spaced css/row-center css/font-fancy!
+                          :style $ {} (:font-size 20)
+                        a $ {}
+                          :href $ :demo item
+                          :target "\"_self"
+                          :style $ {} (:text-decoration :none)
+                          :inner-text $ :title item
                         =< 8 nil
-                        a
-                          {}
-                            :href $ :url item
-                            :target "\"_blank"
-                            :style $ {} (:text-decoration :none) (:font-size 12)
-                          <> "\"[git]"
+                        a $ {}
+                          :href $ :url item
+                          :target "\"_blank"
+                          :style $ {} (:text-decoration :none) (:font-size 12)
+                          :inner-text "\"[git]"
                       =< 8 nil
                       <> (:about item)
                         {} $ :color (hsl 0 0 70)
+        |style-logo-spin $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defstyle style-logo-spin $ {}
+              "\"&" $ {} (:margin-left -10)
+                :background-image $ str "|url(http://cdn.tiye.me/logo/topix.png)"
+                :background-size :cover
+                :width 160
+                :height 160
+                :display :inline-block
+                :opacity 0.8
+        |style-project $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defstyle style-project $ {}
+              "\"&" $ {}
+                :border $ str "\"1px solid " (hsl 180 80 94)
+                :padding "|8px 16px"
+                :margin 20
+                :width 360
+                :align-items :center
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require
             [] respo-ui.core :refer $ [] hsl
             [] respo-ui.core :as ui
+            respo.css :refer $ defstyle
+            [] respo-ui.css :as css
             [] respo.core :refer $ [] defcomp >> list-> <> a div button textarea span
             [] respo.comp.space :refer $ [] =<
             [] reel.comp.reel :refer $ [] comp-reel

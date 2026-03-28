@@ -1,9 +1,13 @@
 {
   "name": "topix.im",
   "version": "0.1.0",
+  "packageManager": "yarn@4.12.0",
   "description": "Home page for Topix",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "compile": "cr js",
+    "build": "yarn compile && yarn vite build --base=./"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:TopixIM/topix.im.git"
@@ -12,9 +16,9 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^6.4.1"
+    "vite": "^8.0.2"
   },
   "dependencies": {
-    "@calcit/procs": "^0.9.8"
+    "@calcit/procs": "0.12.13"
   }
 }

@@ -8,7 +8,7 @@
   "scripts": {
     "compile": "calcit calcit.cirru js",
     "build": "yarn compile && vite build",
-    "dev": "yarn compile && concurrently --kill-others \"calcit calcit.cirru js -w\" \"vite\""
+    "dev": "yarn compile && vite"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,6 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "concurrently": "^10.0.5",
     "vite": "8.3.1"
   },
   "dependencies": {

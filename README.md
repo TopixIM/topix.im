@@ -10,7 +10,7 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 Use Calcit/procs 0.27.0, Node.js 24 and Yarn 4.18.0. Only calcit.cirru/deps.cirru are maintained.
 Run `caps --strict --ci`, `yarn install --immutable`, then `yarn dev` or `yarn build`.
-Development initially compiles, then jointly runs Calcit watch and Vite; either exiting stops the other.
+`yarn dev` compiles initially and starts Vite. For live Calcit edits, run `calcit calcit.cirru js -w` in another terminal.
 
 The eleven project descriptions/links, Topi layout, shared fonts/logo and topix.im storage key are retained.
 Project fields, Store and application Op are nominal; typed Reel handles debugger controls separately.

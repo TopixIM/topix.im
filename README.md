@@ -17,11 +17,13 @@ Project fields, Store and application Op are nominal; typed Reel handles debugge
 Legacy stored Maps and current Structs normalize to Store; cursor state remains an open Map.
 
 CI keeps canonical formatting, strict entry/public contracts, the original quality baseline and real build.
-Main uploads only frontend dist resources with COS action v1.1.1 built-in public verification;
-Vite base and COS prefix match TopixIM/topix.im/. PRs check/build without deployment credentials.
-Local builds default to relative URLs. No independent upload checker or extra test suite is added.
-Original server dist/* and rsync-user@tiye.me:/web-assets/repo/TopixIM/topix.im destination are unchanged.
-Production requires COS_BUCKET, COS_SECRET_ID, COS_SECRET_KEY and the original rsync_private_key secrets.
+生产仅上传前端 `dist/`，使用 COS action v1.2.0 的 `public-base-url` 内置校验；
+Vite base 与 COS prefix 都是 `TopixIM/topix.im/`。PR 只检查和构建，不需要部署凭据。
+本地构建默认使用相对 URL，不增加独立上传校验器或测试套件。
+生产任务串行排队、不取消正在运行的上传；发布前检查当前 main SHA，旧提交跳过 COS 和服务器上传。
+该检查不是 COS 与 rsync 的原子发布保证。
+原服务器 `dist/*` 和 `rsync-user@tiye.me:/web-assets/repo/TopixIM/topix.im` 目标保持不变。
+生产需要 `COS_BUCKET`、`COS_SECRET_ID`、`COS_SECRET_KEY` 和原有 `rsync_private_key` secrets。
 
 ### License
 

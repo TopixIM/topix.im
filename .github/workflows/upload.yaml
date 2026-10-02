@@ -12,6 +12,7 @@ permissions:
 concurrency:
   group: cos-upload-${{ github.repository }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'production' }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   test:
@@ -32,8 +33,9 @@ jobs:
         corepack prepare yarn@4.18.0 --activate
         yarn --version
 
-    - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
+    - uses: calcit-lang/setup-calcit@v1.5.0
       with:
+        version: "0.27.0"
         tools: calcit,caps
         caps-version: "0.1.1"
 
@@ -43,11 +45,6 @@ jobs:
         caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
-        test "$(calcit --version)" = "0.27.0"
-        test -f calcit.cirru
-        test -f deps.cirru
-        test ! -e compact.cirru
-        test ! -e package.cirru
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only
@@ -61,9 +58,26 @@ jobs:
         VITE_BASE_URL: https://cos-sh.tiye.me/${{ github.repository }}/
       run: yarn build
 
+    - name: Check current production revision
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      id: production
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        current_sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/main" --jq '.sha')"
+        if [[ "$GITHUB_SHA" == "$current_sha" ]]; then
+          echo "current=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "current=false" >> "$GITHUB_OUTPUT"
+          echo "::notice::Skip stale production revision ${GITHUB_SHA}; current main is ${current_sha}."
+        fi
+
     - name: Upload and verify frontend on COS
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: worktools/cos-upload-action@17e6d213fe9f6772a6090a13c8ba044cd6cbcb09 # v1.1.1
+        && steps.production.outputs.current == 'true'
+      timeout-minutes: 10
+      uses: worktools/cos-upload-action@v1.2.0
       with:
         source-dir: dist
         bucket: ${{ secrets.COS_BUCKET }}
@@ -75,6 +89,7 @@ jobs:
 
     - name: Deploy to server
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        && steps.production.outputs.current == 'true'
       id: deploy
       uses: Pendect/action-rsyncer@8e05ffa5c93e5d9c9b167796b26044d2c616b2b9 # v2.0.0
       env:
@@ -88,4 +103,5 @@ jobs:
 
     - name: Display status from deploy
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        && steps.production.outputs.current == 'true'
       run: echo "${{ steps.deploy.outputs.status }}"

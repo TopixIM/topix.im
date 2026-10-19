@@ -1,22 +1,13 @@
 {} (:schemaVersion 2)
-  :definitions $ {} $ |app.schema/Reel
-    {} (:codeDynamic 0)
-      :codeNil 0
-      :declaredOptional 0
-      :deprecatedCalls 0
-      :schemaDynamic 1
-      :typeNone 0
-      :typeNotFull 1
-      :unresolved 1
-      :unsafeCoerce 0
+  :definitions $ {}
   :metrics $ {} (:codeDynamic 0)
     :codeNil 0
     :declaredOptional 0
     :deprecatedCalls 0
-    :schemaDynamic 1
+    :schemaDynamic 0
     :typeNone 0
-    :typeNotFull 1
-    :unresolved 1
+    :typeNotFull 0
+    :unresolved 0
     :unsafeCoerce 0
   :scope $ {} (:includeDependencies false)
     :namespace nil

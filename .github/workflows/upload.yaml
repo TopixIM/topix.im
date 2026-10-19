@@ -35,7 +35,6 @@ jobs:
 
     - uses: calcit-lang/setup-calcit@v1.5.0
       with:
-        version: "0.27.0"
         tools: calcit,caps
         caps-version: "0.1.1"
 
@@ -47,11 +46,10 @@ jobs:
         caps verify --toolchain
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
-        calcit calcit.cirru --check-only
-        calcit calcit.cirru analyze check-public \
-          --ns app.comp.container --ns app.config --ns app.main \
-          --ns app.schema --ns app.updater --summary-only --format json
+        calcit calcit.cirru --check-only --all-defs --format json
+        calcit calcit.cirru fix --workflow strict --verify
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
+        calcit calcit.cirru test --require-match
 
     - name: Compile and build
       env:

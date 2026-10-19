@@ -13,7 +13,7 @@
         'Project $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Project (:title 'String) (:about 'String) (:url 'String) (:demo 'String)
           :examples $ []
-          :schema $ :: 'Struct
+          :schema $ :: 'StructDef
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
@@ -143,8 +143,8 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
-            assert-type (typed/new-reel schema/store) (:: 'reel.typed/State 'app.schema/Op 'app.schema/Store)
+          :code $ quote $ defref *reel
+            typed/State :base schema/store :store schema/store :records ([]) :pointer (Option :none) :stopped? false :display? false :merged? false
           :examples $ []
           :schema $ :: 'Ref $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
@@ -155,6 +155,7 @@
                 reset! *reel $ typed/apply-control updater @*reel control
               (:none)
                 reset! *reel $ typed/record-op updater @*reel (schema/normalize-op op) (generate-id!) (host/now-ms)
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -162,7 +163,7 @@
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
             render-app!
-            add-watch *reel :changes $ fn (reel previous) (render-app!)
+            add-watch! *reel :changes $ fn (reel previous) (render-app!)
             listen-devtools! |a dispatch!
             set-before-unload! $ fn (event) (persist-storage!)
             set-interval! persist-storage! 60000
@@ -177,10 +178,14 @@
             :args $ []
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def mount-target
-            option:unwrap $ query-selector |.app
+          :code $ quote $ defn mount-target ()
+            match (respo-browser/query-selector |.app)
+              (:some element) element
+              (:none) (raise "|Missing .app mount element")
           :examples $ []
-          :schema $ :: 'js-ffi.browser/DomElementHost
+          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
+            :args $ []
+            :features $ #{} :js-ffi
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             storage-set!
@@ -192,8 +197,8 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
-              do (remove-watch *reel :changes) (clear-cache!)
-                add-watch *reel :changes $ fn (reel prev) (render-app!)
+              do (remove-watch! *reel :changes) (clear-cache!)
+                add-watch! *reel :changes $ fn (reel prev) (render-app!)
                 reset! *reel $ typed/refresh updater @*reel schema/store
                 hud! |ok~ |Ok
               hud! |error build-errors
@@ -204,7 +209,9 @@
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! mount-target (comp-container @*reel) dispatch!
+            render! (mount-target) (comp-container @*reel)
+              fn (op)
+                if (enum? op) (dispatch! op) (raise "|Expected application or Reel operation Enum")
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -231,9 +238,10 @@
             app.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
-            js-ffi.browser :refer $ query-selector set-before-unload! set-interval! set-timeout! storage-get storage-set!
+            js-ffi.browser :refer $ set-before-unload! set-interval! set-timeout! storage-get storage-set!
             respo.util :refer $ generate-id!
             js-ffi.shared :as host
+            respo.ffi.browser :as respo-browser
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
@@ -242,13 +250,13 @@
             :content 'String
             :hydrate-storage 'app.schema/Store
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
             :states $ :: 'Map 'Tag 'Dynamic
             :content 'String
           :examples $ []
-          :schema $ :: 'Struct
+          :schema $ :: 'StructDef
         'config $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def config
             {} $ :storage |workflow
@@ -271,11 +279,34 @@
             :args $ [] 'Enum
         'normalize-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-store (data)
-            if (struct? data) (assert-type data 'app.schema/Store) (decode-map-as data 'app.schema/Store)
+            if (struct? data)
+              struct-match data
+                Store store $ match (struct-definition store)
+                  (:some definition)
+                    if (identical? definition Store) store $ decode-map-as (&struct:to-map store) 'app.schema/Store
+                  (:none) (raise "|Expected nominal Topix Store")
+                _ other $ raise "|Expected Topix Store"
+              decode-map-as data 'app.schema/Store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
             :args $ [] 'T
             :generics $ [] 'T
+          :tests $ [] $ %{} 'TestEntry (:name |legacy-map-and-store-roundtrip)
+            :code $ quote $ let
+                legacy $ {}
+                  :states $ {} $ :reel
+                    {} $ :data |kept
+                  :content |saved
+                store $ normalize-store legacy
+                restored $ normalize-store $ parse-cirru-edn (format-cirru-edn store)
+              assert= store.:content |saved
+              assert= store.:states $ {} $ :reel
+                {} $ :data |kept
+              assert= restored store
+              assert= (normalize-store store) store
+              assert=
+                identical? (normalize-store store) store
+                , true
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :content |
@@ -298,6 +329,22 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
             :args $ [] 'app.schema/Store 'app.schema/Op 'String 'Number
+          :tests $ [] $ %{} 'TestEntry (:name |content-cursor-and-hydration)
+            :code $ quote $ let
+                initial $ app.schema/Store :states ({}) :content |
+                changed $ updater initial (app.schema/Op :content |hello) |op 0
+                cursor-state $ {} $ :display? true
+                cursor-updated $ updater changed
+                  app.schema/Op :states ([]) cursor-state
+                  , |op2 1
+              assert= changed.:content |hello
+              assert=
+                .unwrap $ get cursor-updated.:states :data
+                , cursor-state
+              assert= cursor-updated.:content |hello
+              assert=
+                updater initial (app.schema/Op :hydrate-storage changed) |op3 2
+                , changed
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-state-tree

@@ -162,16 +162,16 @@
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
-            render-app!
-            add-watch! *reel :changes $ fn (reel previous) (render-app!)
-            listen-devtools! |a dispatch!
-            set-before-unload! $ fn (event) (persist-storage!)
-            set-interval! persist-storage! 60000
             match
               storage-get $ option:unwrap $ get config/site :storage-key
               (:some raw)
                 dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
               (:none) &unit
+            render-app!
+            add-watch! *reel :changes $ fn (reel previous) (render-app!)
+            listen-devtools! |a dispatch!
+            set-before-unload! $ fn (event) (persist-storage!)
+            set-interval! persist-storage! 60000
             println "|App started."
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)

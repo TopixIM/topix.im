@@ -53,8 +53,17 @@ jobs:
 
     - name: Compile and build
       env:
-        VITE_BASE_URL: https://cos-sh.tiye.me/${{ github.repository }}/
+        VITE_BASE_URL: ${{ github.event_name == 'pull_request' && './' || format('https://cos-sh.tiye.me/{0}/', github.repository) }}
       run: yarn build
+
+    - name: Preserve PR frontend for interaction acceptance
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v7.0.2
+      with:
+        name: topixim-pr-frontend
+        path: dist/
+        if-no-files-found: error
+        retention-days: 3
 
     - name: Check current production revision
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'

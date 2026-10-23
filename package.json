@@ -1,6 +1,6 @@
 {
   "name": "topix.im",
-  "version": "0.1.3",
+  "version": "0.2.0-alpha.1",
   "packageManager": "yarn@4.18.0",
   "type": "module",
   "description": "Home page for Topix",
@@ -21,6 +21,6 @@
     "vite": "8.3.3"
   },
   "dependencies": {
-    "@calcit/procs": "0.30.1"
+    "@calcit/procs": "0.31.0-alpha.1"
   }
 }

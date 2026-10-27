@@ -1,7 +1,9 @@
 
 Topix.IM home page
 
-当前 CLI / `@calcit/procs` 配对已发布的 `0.31.0-alpha.7`；移除不存在的 `respo.util/generate-id!` 导入，实际仍调用原 core 内建 ID 生成器，保留 `hud!`。存档恢复对无来源且名为 Store 的 EDN 值先转 Map，通过完整字段解码后构造本地 Store；其他来源的名义 Struct 仍拒绝，本地 Store 保留原对象。
+当前 CLI / `@calcit/procs` 从 alpha.7 配对升级为已发布的正式 `0.31.0`，消费者需同步两端并重新生成 JS。源码、公开合同、存档协议与部署路径保持不变；本轮不合并、部署或发版。
+
+前轮已移除不存在的 `respo.util/generate-id!` 导入，实际仍调用原 core 内建 ID 生成器，保留 `hud!`。存档恢复对无来源且名为 Store 的 EDN 值先转 Map，通过完整字段解码后构造本地 Store；其他来源的名义 Struct 仍拒绝，本地 Store 保留原对象。
 ----
 
 http://index.topix.im
@@ -10,7 +12,7 @@ http://index.topix.im
 
 Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
-### 本轮正式 0.30.1：使用者影响
+### 历史：正式 0.30.1 迁移
 
 CLI/procs 配对正式 `0.30.1`，依赖固定为已发布的 Reel `0.6.41`、UI `0.8.0`、
 Respo `0.16.124`、JS-FFI `0.2.5`，Router `0.8.37` 为传递依赖。

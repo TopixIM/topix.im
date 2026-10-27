@@ -239,7 +239,6 @@
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
             js-ffi.browser :refer $ set-before-unload! set-interval! set-timeout! storage-get storage-set!
-            respo.util :refer $ generate-id!
             js-ffi.shared :as host
             respo.ffi.browser :as respo-browser
     'app.schema $ %{} 'FileEntry
@@ -285,7 +284,14 @@
                   (:some definition)
                     if (identical? definition Store) store $ decode-map-as (&struct:to-map store) 'app.schema/Store
                   (:none) (raise "|Expected nominal Topix Store")
-                _ other $ raise "|Expected Topix Store"
+                _ other $ let
+                    wire-template $ parse-cirru-edn $ format-cirru-edn store
+                  if (struct? wire-template)
+                    if
+                      = (struct-definition other) (struct-definition wire-template)
+                      decode-map-as (&struct:to-map other) 'app.schema/Store
+                      raise "|Expected Topix Store"
+                    raise "|Expected Topix Store"
               decode-map-as data 'app.schema/Store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/Store)

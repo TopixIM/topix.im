@@ -1,5 +1,7 @@
 
 Topix.IM home page
+
+当前 CLI / `@calcit/procs` 配对已发布的 `0.31.0-alpha.7`；移除不存在的 `respo.util/generate-id!` 导入，实际仍调用原 core 内建 ID 生成器，保留 `hud!`。存档恢复对无来源且名为 Store 的 EDN 值先转 Map，通过完整字段解码后构造本地 Store；其他来源的名义 Struct 仍拒绝，本地 Store 保留原对象。
 ----
 
 http://index.topix.im

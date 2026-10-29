@@ -36,11 +36,13 @@
                     :style $ {} (:font-size 16)
                       :color $ hsl 0 0 80
                   <> "|Sharing topics over the wire!"
-                  =< 8 &unit
+                  =< 8 0
                   a $ {} (:href |https://github.com/TopixIM/) (:inner-text |TopixIM)
-                =< &unit 32
+                div $ {} $ :style
+                  {} $ :height 32
                 render-projects projects
-                =< &unit 200
+                div $ {} $ :style
+                  {} $ :height 200
                 when dev? $ comp-typed-reel (>> states :reel) reel $ {}
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component)
@@ -78,13 +80,13 @@
                       :target |_self
                       :style $ {} $ :text-decoration :none
                       :inner-text $ :title item
-                    =< 8 &unit
+                    =< 8 0
                     a $ {}
                       :href $ :url item
                       :target |_blank
                       :style $ {} (:text-decoration :none) (:font-size 12)
                       :inner-text |[git]
-                  =< 8 &unit
+                  =< 8 0
                   <> (:about item)
                     {} $ :color $ hsl 0 0 70
           :examples $ []

@@ -13,7 +13,7 @@
         'Project $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Project (:title 'String) (:about 'String) (:url 'String) (:demo 'String)
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
@@ -43,8 +43,7 @@
                 =< &unit 200
                 when dev? $ comp-typed-reel (>> states :reel) reel $ {}
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
+          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component)
         'projects $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def projects
             []
@@ -60,16 +59,14 @@
               Project :title |Copycat :about "|Copy/paste toolkits" :url |https://github.com/TopixIM/copycat :demo |http://repo.topix.im/copycat/
               Project :title |Timedrops :about "|Time records" :url |https://github.com/TopixIM/timedrops :demo |http://repo.topix.im/timedrops/
           :examples $ []
-          :schema $ :: 'List 'app.comp.container/Project
+          :schema $ quote $ List app.comp.container/Project
         'render-projects $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-projects (items)
             list->
               {} (:class-name css/row)
                 :style $ {} (:flex-wrap :wrap) (:justify-content :center)
               -> items $ map-indexed $ fn (idx item)
-                hint-fn $ {}
-                  :args $ [] 'Number 'app.comp.container/Project
-                  :return $ :: 'Tuple 'Number 'respo.schema/Element
+                hint-fn $ Fn Number app.comp.container/Project $ -> (Tuple Number respo.schema/Element)
                 [] idx $ div
                   {} $ :class-name $ str-spaced css/row style-project
                   div
@@ -91,8 +88,7 @@
                   <> (:about item)
                     {} $ :color $ hsl 0 0 70
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Element)
-            :args $ [] $ :: 'List 'app.comp.container/Project
+          :schema $ quote $ Fn (List app.comp.container/Project) (-> respo.schema/Element)
         'style-logo-spin $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-logo-spin
             {} $ |& $ {} (:margin-left -10)
@@ -103,7 +99,7 @@
               :display :inline-block
               :opacity 0.8
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
         'style-project $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-project
             {} $ |& $ {}
@@ -113,7 +109,7 @@
               :width 360
               :align-items :center
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -132,12 +128,12 @@
           :code $ quote $ def dev?
             = |dev $ option:unwrap-or (get-env |mode) |release
           :examples $ []
-          :schema $ :: 'Bool
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} (:dev-ui |http://localhost:8100/main.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main.css) (:cdn-url |http://cdn.tiye.me/topix-im/) (:cdn-folder |tiye.me:cdn/topix-im) (:title |Topix) (:icon |http://cdn.tiye.me/logo/topix.png) (:storage-key |topix.im) (:upload-folder |tiye.me:repo/TopixIM/topix.im/)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.main $ %{} 'FileEntry
@@ -146,7 +142,7 @@
           :code $ quote $ defref *reel
             typed/State :base schema/store :store schema/store :records ([]) :pointer (Option :none) :stopped? false :display? false :merged? false
           :examples $ []
-          :schema $ :: 'Ref $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
+          :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
@@ -157,8 +153,7 @@
                 reset! *reel $ typed/record-op updater @*reel (schema/normalize-op op) (generate-id!) (host/now-ms)
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
+          :schema $ quote $ Fn Enum (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -174,26 +169,21 @@
             set-interval! persist-storage! 60000
             println "|App started."
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
             match (respo-browser/query-selector |.app)
               (:some element) element
               (:none) (raise "|Missing .app mount element")
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             storage-set!
               option:unwrap $ get config/site :storage-key
               format-cirru-edn $ :store @*reel
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
@@ -204,28 +194,23 @@
               hud! |error build-errors
             println "|Reload finished"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! (mount-target) (comp-container @*reel)
               fn (op)
                 if (enum? op) (dispatch! op) (raise "|Expected application or Reel operation Enum")
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'repeat! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn repeat! (duration callback)
             set-timeout!
               fn () (callback) (repeat! duration callback) &unit
               * 1000 duration
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Number $ :: 'Fn
-              {} (:return 'Unit)
-                :args $ []
+          :schema $ quote $ Fn Number
+            Fn $ -> Unit
+            -> Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -245,22 +230,24 @@
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states (:: 'List 'Dynamic) 'Dynamic
+            :states
+              quote $ List Dynamic
+              , 'Dynamic
             :content 'String
             :hydrate-storage 'app.schema/Store
           :examples $ []
-          :schema $ :: 'EnumDef
+          :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ :: 'Map 'Tag 'Dynamic
+            :states $ quote $ Map Tag Dynamic
             :content 'String
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'config $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def config
             {} $ :storage |workflow
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
         'normalize-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-op (op)
             match op
@@ -274,8 +261,7 @@
                 Op :hydrate-storage $ normalize-store data
               _ $ raise "|Unknown application operation"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
-            :args $ [] 'Enum
+          :schema $ quote $ Fn Enum (-> app.schema/Op)
         'normalize-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-store (data)
             if (struct? data)
@@ -294,9 +280,7 @@
                     raise "|Expected Topix Store"
               decode-map-as data 'app.schema/Store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
-            :args $ [] 'T
-            :generics $ [] 'T
+          :schema $ quote $ Fn T (-> app.schema/Store) (:generics T)
           :tests $ [] $ %{} 'TestEntry (:name |legacy-map-and-store-roundtrip)
             :code $ quote $ let
                 legacy $ {}
@@ -317,7 +301,7 @@
           :code $ quote $ def store
             Store :states ({}) :content |
           :examples $ []
-          :schema $ :: 'app.schema/Store
+          :schema $ quote app.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry
@@ -333,8 +317,7 @@
               (:hydrate-storage data) data
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
-            :args $ [] 'app.schema/Store 'app.schema/Op 'String 'Number
+          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
           :tests $ [] $ %{} 'TestEntry (:name |content-cursor-and-hydration)
             :code $ quote $ let
                 initial $ app.schema/Store :states ({}) :content |

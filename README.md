@@ -1,7 +1,7 @@
 
 Topix.IM home page
 
-当前 CLI / `@calcit/procs` 从 alpha.7 配对升级为已发布的正式 `0.31.0`，消费者需同步两端并重新生成 JS。源码、公开合同、存档协议与部署路径保持不变；本轮不合并、部署或发版。
+当前 CLI / `@calcit/procs` 配对升级为已发布的正式 `0.32.1`，Snapshot 类型写法已用 `edit format` 迁移到 0.32 语法，消费者需同步两端并重新生成 JS。源码、公开合同、存档协议与部署路径保持不变；本轮不合并、部署或发版。
 
 前轮已移除不存在的 `respo.util/generate-id!` 导入，实际仍调用原 core 内建 ID 生成器，保留 `hud!`。存档恢复对无来源且名为 Store 的 EDN 值先转 Map，通过完整字段解码后构造本地 Store；其他来源的名义 Struct 仍拒绝，本地 Store 保留原对象。
 ----

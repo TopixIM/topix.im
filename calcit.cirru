@@ -11,9 +11,13 @@
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
         'Project $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Project (:title 'String) (:about 'String) (:url 'String) (:demo 'String)
+          :code $ quote $ defstruct Project (:title String) (:about String) (:url String) (:demo String)
           :examples $ []
           :schema $ quote StructDef
+        'ProjectChild $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion ProjectChild Number respo.schema/Element
+          :examples $ []
+          :schema $ quote UnionDef
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
@@ -36,14 +40,16 @@
                     :style $ {} (:font-size 16)
                       :color $ hsl 0 0 80
                   <> "|Sharing topics over the wire!"
-                  =< 8 0
+                  space-x 8
                   a $ {} (:href |https://github.com/TopixIM/) (:inner-text |TopixIM)
                 div $ {} $ :style
                   {} $ :height 32
                 render-projects projects
                 div $ {} $ :style
                   {} $ :height 200
-                when dev? $ comp-typed-reel (>> states :reel) reel $ {}
+                if dev?
+                  Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                  Option :none
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component)
         'projects $ %{} 'CodeEntry (:doc |)
@@ -68,7 +74,7 @@
               {} (:class-name css/row)
                 :style $ {} (:flex-wrap :wrap) (:justify-content :center)
               -> items $ map-indexed $ fn (idx item)
-                hint-fn $ Fn Number app.comp.container/Project $ -> (Tuple Number respo.schema/Element)
+                hint-fn $ Fn Number app.comp.container/Project $ -> (List app.comp.container/ProjectChild)
                 [] idx $ div
                   {} $ :class-name $ str-spaced css/row style-project
                   div
@@ -80,13 +86,13 @@
                       :target |_self
                       :style $ {} $ :text-decoration :none
                       :inner-text $ :title item
-                    =< 8 0
+                    space-x 8
                     a $ {}
                       :href $ :url item
                       :target |_blank
                       :style $ {} (:text-decoration :none) (:font-size 12)
                       :inner-text |[git]
-                  =< 8 0
+                  space-x 8
                   <> (:about item)
                     {} $ :color $ hsl 0 0 70
           :examples $ []
@@ -120,7 +126,7 @@
             respo.css :refer $ defstyle
             respo-ui.css :as css
             respo.core :refer $ defcomp >> list-> <> a div button textarea span
-            respo.comp.space :refer $ =<
+            respo.comp.space :refer $ space-x
             reel.comp.reel :refer $ comp-typed-reel
             respo.util.list :refer $ map-with-idx
             app.config :refer $ dev?
@@ -155,7 +161,7 @@
                 reset! *reel $ typed/record-op updater @*reel (schema/normalize-op op) (generate-id!) (host/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn Enum (-> Unit)
+          :schema $ quote $ Fn AnyEnum (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -232,17 +238,15 @@
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states
-              quote $ List Dynamic
-              , 'Dynamic
-            :content 'String
-            :hydrate-storage 'app.schema/Store
+            :states (List respo.schema/CoordKey) Dynamic
+            :content String
+            :hydrate-storage app.schema/Store
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ quote $ Map Tag Dynamic
-            :content 'String
+            :states $ Map Tag Dynamic
+            :content String
           :examples $ []
           :schema $ quote StructDef
         'config $ %{} 'CodeEntry (:doc |)
@@ -255,7 +259,7 @@
             match op
               (:states cursor state)
                 Op :states
-                  decode-map-as cursor $ :: 'List 'Dynamic
+                  decode-map-as cursor $ List respo.schema/CoordKey
                   , state
               (:content content)
                 Op :content $ decode-map-as content 'String
@@ -263,7 +267,7 @@
                 Op :hydrate-storage $ normalize-store data
               _ $ raise "|Unknown application operation"
           :examples $ []
-          :schema $ quote $ Fn Enum (-> app.schema/Op)
+          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
         'normalize-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-store (data)
             if (struct? data)
@@ -313,7 +317,7 @@
             match op
               (:states cursor state)
                 app.schema/Store :states
-                  decode-map-as (update-state-tree store.:states cursor state) (:: 'Map 'Tag 'Dynamic)
+                  decode-map-as (update-state-tree store.:states cursor state) (Map Tag Dynamic)
                   , :content store.:content
               (:content content) (assoc store :content content)
               (:hydrate-storage data) data

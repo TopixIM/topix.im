@@ -19,7 +19,7 @@
           :examples $ []
           :schema $ quote UnionDef
         'comp-container $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (reel)
+          :code $ quote $ defcomp comp-container (reel on-control!)
             let
                 store $ :store reel
                 states store.:states
@@ -48,10 +48,12 @@
                 div $ {} $ :style
                   {} $ :height 200
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                  Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
                   Option :none
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
+            Fn reel.typed/Control $ -> Unit
+            -> respo.schema/Component
         'projects $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def projects
             []
@@ -154,36 +156,21 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
-            if
-              = (enum-definition op) (Option :some typed/Control)
-              dispatch-resolved! $ decode-map-as op 'reel.typed/Control
-              match (typed/decode-control op)
-                (:some control) (dispatch-resolved! control)
-                (:none)
-                  dispatch-resolved! $ schema/normalize-op op
+            reset! *reel $ typed/record-op updater @*reel op (generate-id!) (host/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit)
-        'dispatch-resolved! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch-resolved! (op)
-            reset! *reel $ match op
-              (reel.typed/Control control) (typed/apply-control updater @*reel control)
-              (app.schema/Op action)
-                typed/record-op updater @*reel action (generate-id!) (host/now-ms)
-            , &unit
-          :examples $ []
-          :schema $ quote $ Fn app.schema/ResolvedOp (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn app.schema/Op (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
             match
               storage-get $ option:unwrap $ get config/site :storage-key
               (:some raw)
-                dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
+                dispatch! $ schema/Op :hydrate-storage $ schema/normalize-store (parse-cirru-edn raw)
               (:none) &unit
             render-app!
             add-watch! *reel :changes $ fn (reel previous) (render-app!)
-            listen-devtools! |a dispatch!
+            listen-devtools! |a on-control!
             set-before-unload! $ fn (event) (persist-storage!)
             set-interval! persist-storage! 60000
             println "|App started."
@@ -196,6 +183,12 @@
               (:none) (raise "|Missing .app mount element")
           :examples $ []
           :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
+        'on-control! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-control! (control)
+            reset! *reel $ typed/apply-control updater @*reel control
+            , &unit
+          :examples $ []
+          :schema $ quote $ Fn reel.typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             storage-set!
@@ -216,9 +209,9 @@
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel)
-              fn (op)
-                if (enum? op) (dispatch! op) (raise "|Expected application or Reel operation Enum")
+            render-with! (mount-target)
+              fn () $ comp-container @*reel on-control!
+              , dispatch!
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'repeat! $ %{} 'CodeEntry (:doc |)
@@ -233,7 +226,7 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            respo.core :refer $ render! clear-cache!
+            respo.core :refer $ render-with! clear-cache!
             app.comp.container :refer $ comp-container
             app.updater :refer $ updater
             app.schema :as schema
@@ -254,10 +247,6 @@
             :hydrate-storage app.schema/Store
           :examples $ []
           :schema $ quote EnumDef
-        'ResolvedOp $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defunion ResolvedOp Op reel.typed/Control
-          :examples $ []
-          :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
             :states $ Map Tag Dynamic
@@ -269,20 +258,6 @@
             {} $ :storage |workflow
           :examples $ []
           :schema $ quote $ Map Tag String
-        'normalize-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-op (op)
-            match op
-              (:states cursor state)
-                Op :states
-                  decode-map-as cursor $ List respo.schema/CoordKey
-                  , state
-              (:content content)
-                Op :content $ decode-map-as content 'String
-              (:hydrate-storage data)
-                Op :hydrate-storage $ normalize-store data
-              _ $ raise "|Unknown application operation"
-          :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
         'normalize-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-store (data)
             if (struct? data)

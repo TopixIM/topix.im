@@ -1,7 +1,9 @@
 
 Topix.IM home page
 
-当前 CLI 与 `@calcit/procs` 配对正式 **0.37.0**。升级后重新安装依赖并构建前端。首页项目列表、链接和旧存档继续沿用原格式。项目列表项按 Respo 要求使用列表对，元素类型为 `Number | Element`，状态路径使用 `CoordKey`。 分发时明确区分首页操作与 Reel 控制，旧控制事件仍可用。
+当前 CLI 与 `@calcit/procs` 配对正式 **0.38.0**，并使用 Reel **0.11.0**。升级后重新安装依赖并构建前端。首页项目列表、链接和存档格式沿用原版。
+
+应用操作使用具名 `Op`。Reel 快捷键和面板通过 `on-control!` 接收具名 `Control`。自定义代码若仍发送匿名 `:reel/*` 事件，需要迁移到这个回调。原开发模式快捷键仍可打开面板。
 
 前轮已移除不存在的 `respo.util/generate-id!` 导入，实际仍调用原 core 内建 ID 生成器，保留 `hud!`。存档恢复对无来源且名为 Store 的 EDN 值先转 Map，通过完整字段解码后构造本地 Store；其他来源的名义 Struct 仍拒绝，本地 Store 保留原对象。
 ----

@@ -14,10 +14,6 @@
           :code $ quote $ defstruct Project (:title String) (:about String) (:url String) (:demo String)
           :examples $ []
           :schema $ quote StructDef
-        'ProjectChild $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defunion ProjectChild Number respo.schema/Element
-          :examples $ []
-          :schema $ quote UnionDef
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel on-control!)
             let
@@ -72,12 +68,12 @@
           :schema $ quote $ List app.comp.container/Project
         'render-projects $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-projects (items)
-            list->
+            keyed->
               {} (:class-name css/row)
                 :style $ {} (:flex-wrap :wrap) (:justify-content :center)
               -> items $ map-indexed $ fn (idx item)
-                hint-fn $ Fn Number app.comp.container/Project $ -> (List app.comp.container/ProjectChild)
-                [] idx $ div
+                hint-fn $ Fn Number app.comp.container/Project $ -> respo.schema/ChildPair
+                keyed-element idx $ div
                   {} $ :class-name $ str-spaced css/row style-project
                   div
                     {}
@@ -127,7 +123,7 @@
             respo-ui.core :as ui
             respo.css :refer $ defstyle
             respo-ui.css :as css
-            respo.core :refer $ defcomp >> list-> <> a div button textarea span
+            respo.core :refer $ defcomp >> keyed-> keyed-element <> a div button textarea span
             respo.comp.space :refer $ space-x
             reel.comp.reel :refer $ comp-typed-reel
             respo.util.list :refer $ map-with-idx

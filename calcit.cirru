@@ -44,8 +44,8 @@
                 div $ {} $ :style
                   {} $ :height 200
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
-                  Option :none
+                  Some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
+                  , None
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
             Fn reel.typed/Control $ -> Unit
@@ -65,7 +65,7 @@
               Project :title |Copycat :about "|Copy/paste toolkits" :url |https://github.com/TopixIM/copycat :demo |http://repo.topix.im/copycat/
               Project :title |Timedrops :about "|Time records" :url |https://github.com/TopixIM/timedrops :demo |http://repo.topix.im/timedrops/
           :examples $ []
-          :schema $ quote $ List app.comp.container/Project
+          :schema $ quote $ List Project
         'render-projects $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-projects (items)
             keyed->
@@ -94,7 +94,7 @@
                   <> (:about item)
                     {} $ :color $ hsl 0 0 70
           :examples $ []
-          :schema $ quote $ Fn (List app.comp.container/Project) (-> respo.schema/Element)
+          :schema $ quote $ Fn (List Project) (-> respo.schema/Element)
         'style-logo-spin $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-logo-spin
             {} $ |& $ {} (:margin-left -10)
@@ -132,7 +132,9 @@
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $
+              get-env |mode
+              , .unwrap-or |release
           :examples $ []
           :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
@@ -146,21 +148,23 @@
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel
-            typed/State :base schema/store :store schema/store :records ([]) :pointer (Option :none) :stopped? false :display? false :merged? false
+            typed/State :base schema/store :store schema/store :records ([]) :pointer None :stopped? false :display? false :merged? false
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
+          :schema $ quote $ Ref (typed/State schema/Op schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
             reset! *reel $ typed/record-op updater @*reel op (generate-id!) (host/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn app.schema/Op (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
             match
-              storage-get $ option:unwrap $ get config/site :storage-key
+              storage-get $
+                get config/site :storage-key
+                , .unwrap
               (:some raw)
                 dispatch! $ schema/Op :hydrate-storage $ schema/normalize-store (parse-cirru-edn raw)
               (:none) &unit
@@ -184,11 +188,12 @@
             reset! *reel $ typed/apply-control updater @*reel control
             , &unit
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             storage-set!
-              option:unwrap $ get config/site :storage-key
+                get config/site :storage-key
+                , .unwrap
               format-cirru-edn $ :store @*reel
           :examples $ []
           :schema $ quote $ Fn (-> Unit)
@@ -272,7 +277,7 @@
                     raise "|Expected Topix Store"
               decode-map-as data 'app.schema/Store
           :examples $ []
-          :schema $ quote $ Fn T (-> app.schema/Store) (:generics T)
+          :schema $ quote $ Fn T (-> Store) (:generics T)
           :tests $ [] $ %{} 'TestEntry (:name |legacy-map-and-store-roundtrip)
             :code $ quote $ let
                 legacy $ {}
@@ -293,7 +298,7 @@
           :code $ quote $ def store
             Store :states ({}) :content |
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry

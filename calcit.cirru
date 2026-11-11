@@ -72,7 +72,7 @@
               {} (:class-name css/row)
                 :style $ {} (:flex-wrap :wrap) (:justify-content :center)
               -> items $ map-indexed $ fn (idx item)
-                hint-fn $ Fn Number app.comp.container/Project $ -> respo.schema/ChildPair
+                hint-fn $ Fn Number Project $ -> respo.schema/ChildPair
                 keyed-element idx $ div
                   {} $ :class-name $ str-spaced css/row style-project
                   div

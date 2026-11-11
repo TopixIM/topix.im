@@ -48,7 +48,7 @@ jobs:
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only --all-defs --format json
         calcit calcit.cirru fix --workflow strict --verify
-        calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
+        bash scripts/check-types.sh
         calcit calcit.cirru test --require-match
 
     - name: Compile and build
